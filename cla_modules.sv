@@ -1,23 +1,37 @@
 `timescale 1ns / 1ps // interpret time units
 
-//------1. Design and Simulate the Following Modules--------
-
+//2-input NAND-gate
 module nand2_delay (
-    input logic a,
-    input logic b,
+    input logic a, b,
     output logic y
 );
 assign #1 y = ~(a & b); //#1 = 1T delay
 endmodule
 
-module xor2_delay (
-    input logic a,
-    input logic b,
+//3-input NAND-gate
+module nand3_delay (
+    input logic a, b,
+    input logic c,
     output logic y
 );
+assign #1.25 y = ~(a & b & c); //#1.25 = 1.25T delay
+endmodule
 
-logic nand1_out;
-logic nand2_out;
+//4-input NAND-gate
+module nand4_delay (
+    input logic a, b,
+    input logic c, d,
+    output logic y
+);
+assign #1.5 y = ~(a & b & c & d); //#1.5 = 1.5T delay
+endmodule
+
+//2-input XOR-gate
+module xor2_delay (
+    input logic a, b,
+    output logic y
+);
+logic nand1_out, nand2_out;
 logic nand3_out;
 
 nand2_delay u1 (
@@ -25,7 +39,6 @@ nand2_delay u1 (
     .b(b),
     .y(nand1_out) // A nand B = y1
 ); 
-
 nand2_delay u2 (
     .a(a), 
     .b(nand1_out),
@@ -36,7 +49,6 @@ nand2_delay u3 (
     .b(nand1_out), 
     .y(nand3_out) // B nand y1 = y3
 ); 
-
 nand2_delay u4 (
     .a(nand2_out), 
     .b(nand3_out), 
@@ -44,14 +56,11 @@ nand2_delay u4 (
 ); 
 endmodule
 
-
-
+//------1. Design and Simulate the Following Modules--------
 module propagate_logic (
-    input logic a,
-    input logic b,
+    input logic a, b,
     output logic p //A or B
 );
-
 logic nand1_out;
 logic nand2_out;
 
@@ -60,13 +69,11 @@ nand2_delay u1 (
     .b(a), 
     .y(nand1_out)
 ); 
-
 nand2_delay u2 (
     .a(b), 
     .b(b), 
     .y(nand2_out)
 ); 
-
 nand2_delay u3 (
     .a(nand1_out), 
     .b(nand2_out), 
@@ -75,20 +82,16 @@ nand2_delay u3 (
 endmodule
 
 module generate_logic (
-    input logic a,
-    input logic b,
+    input logic a, b,
     output logic g //A and B
 );
-
 logic nand_out;
-
 
 nand2_delay u1 (
     .a(a), 
     .b(b),
     .y(nand_out)
 ); 
-
 nand2_delay u2 (
     .a(nand_out), 
     .b(nand_out), 
@@ -97,12 +100,10 @@ nand2_delay u2 (
 endmodule
 
 module sum_logic (
-    input logic a,
-    input logic b,
-    input logic carry_in,
+    input logic a, b,
+    input logic cin,
     output logic sum
 );
-
 logic xor1_out;
 
 xor2_delay u1 (
@@ -110,75 +111,45 @@ xor2_delay u1 (
     .b(b), 
     .y(xor1_out)
 ); 
-
 xor2_delay u2 (
     .a(xor1_out), 
-    .b(carry_in), 
+    .b(cin), 
     .y(sum)
 ); 
-
 endmodule
 
-module carry_logic_0 ( 
-input logic p0,
-input logic g0,
-input logic carry_in0,
-output logic carry_out);
-
+module CLA_carry_logic_0 ( 
+input logic p0, g0,
+input logic ci0,
+output logic co
+);
 logic nand1_out;
 logic nand2_out;
 
 nand2_delay u1 (
     .a(p0), 
-    .b(carry_in0), 
+    .b(ci0), 
     .y(nand1_out)
 ); 
-
 nand2_delay u2 (
     .a(g0), 
     .b(g0), 
     .y(nand2_out)
 ); 
-
 nand2_delay u3 (
     .a(nand1_out), 
     .b(nand2_out), 
-    .y(carry_out)
+    .y(co)
 ); 
 endmodule
 
 
 //---------2. Design nandN_delay Gate Modules--------
-
-//nandN_delay without N amount, rewrite?
-module nand3_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    output logic y
-);
-assign #1.25 y = ~(a & b & c); //#1.25 = 1.25T delay
-endmodule
-
-module nand4_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    output logic y
-);
-assign #1.5 y = ~(a & b & c & d); //#1.5 = 1.5T delay
-endmodule
-
 module nand5_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    input logic e,
+    input logic a, b, 
+    input logic c, d, e,
     output logic y
 );
-
 logic nand1_out;
 logic nand2_out;
 
@@ -188,7 +159,6 @@ nand3_delay u1 (
     .c(c), 
     .y(nand1_out)
 );
-
 nand2_delay u2 (
     .a(d), 
     .b(e), 
@@ -202,15 +172,10 @@ nand2_delay u3 (
 endmodule
 
 module nand6_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    input logic e,
-    input logic f,
+    input logic a, b, c,
+    input logic d, e, f,
     output logic y
 );
-
 logic nand1_out;
 logic nand2_out;
 
@@ -220,7 +185,6 @@ nand3_delay u1 (
     .c(c), 
     .y(nand1_out)
 );
-
 nand3_delay u2 (
     .a(d), 
     .b(e),
@@ -235,16 +199,10 @@ nand2_delay u3 (
 endmodule
 
 module nand7_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    input logic e,
-    input logic f,
-    input logic g,
+    input logic a, b, c, d,
+    input logic e, f, g,
     output logic y
 );
-
 logic nand1_out;
 logic nand2_out;
 
@@ -254,7 +212,6 @@ nand3_delay u1 (
     .c(c), 
     .y(nand1_out)
 );
-
 nand4_delay u2 (
     .a(d), 
     .b(e),
@@ -270,17 +227,10 @@ nand2_delay u3 (
 endmodule
 
 module nand8_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    input logic e,
-    input logic f,
-    input logic g,
-    input logic h,
+    input logic a, b, c, d,
+    input logic e, f, g, h,
     output logic y
 );
-
 logic nand1_out;
 logic nand2_out;
 
@@ -291,7 +241,6 @@ nand4_delay u1 (
     .d(d),
     .y(nand1_out)
 );
-
 nand4_delay u2 (
     .a(e), 
     .b(f),
@@ -307,20 +256,11 @@ nand2_delay u3 (
 endmodule
 
 module nand9_delay (
-    input logic a,
-    input logic b,
-    input logic c,
-    input logic d,
-    input logic e,
-    input logic f,
-    input logic g,
-    input logic h,
-    input logic i,
+    input logic a, b, c, d, e,
+    input logic f, g, h, i,
     output logic y
 );
-
-logic nand1_out;
-logic nand2_out;
+logic nand1_out, nand2_out;
 logic nand3_out;
 
 nand3_delay u1 (
@@ -329,7 +269,6 @@ nand3_delay u1 (
     .c(c), 
     .y(nand1_out)
 );
-
 nand3_delay u2 (
     .a(d), 
     .b(e),
@@ -352,59 +291,14 @@ endmodule
 
 
 //------------ 3. Design the Carry-Out Logic 1-7-----------
-/*
-module carry_logic_i (    
-    input logic pi,
-    input logic gi,
-    input logic carry_ini, //carry in i-1
-    output logic carry_outi
-);
-
-logic nand_pc_in; //p nand carry in
-logic nand_g_in; 
-logic and_;
-
-nand2_delay u1 ( 
-    .a(pi), 
-    .b(carry_ini), 
-    .y(nand_pc_in)
-); 
-
-nand2_delay u2 ( //p and carry in
-    .a(nand_pc_in), 
-    .b(nand_pc_in), 
-    .y(and_)
-); 
-
-nand2_delay u3 ( //not gi 
-    .a(gi), 
-    .b(gi), 
-    .y(nand_g_in)
-); 
-
-nand2_delay u4 (
-    .a(and_),       //pci
-    .b(nand_g_in),  //not gi
-    .y(carry_outi)  //not(pci and not gi) = pci or gi 
-); 
-endmodule
-*/
-
-
-
 module CLA_carry_logic_1 (
-    input logic p0,
-    input logic g0,
-    input logic p1,
-    input logic g1,
+    input logic p0, g0,
+    input logic p1, g1,
     input logic ci0,
     output logic co
 );
-
-logic nand1_out;
-logic nand2_out;
+logic nand1_out, nand2_out;
 logic nand3_out;
-
 
 nand3_delay u1 (
     .a(p0), 
@@ -431,20 +325,14 @@ nand3_delay u4 (
 endmodule
 
 module CLA_carry_logic_2 (
-    input logic p0,
-    input logic g0,
-    input logic p1,
-    input logic g1,
-    input logic p2,
-    input logic g2,
+    input logic p0, g0,
+    input logic p1, g1,
+    input logic p2, g2,
     input logic ci0,
     output logic co
 );
-
-logic nand1_out; 
-logic nand2_out; 
-logic nand3_out; 
-logic nand4_out;
+logic nand1_out, nand2_out; 
+logic nand3_out, nand4_out; 
 
 nand4_delay u1 (
     .a(p2), 
@@ -486,7 +374,6 @@ module CLA_carry_logic_3 (
     input logic ci0,
     output logic co
 );
-
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out;
 
@@ -540,7 +427,6 @@ module CLA_carry_logic_4 (
     input logic ci0,
     output logic co
 );
-
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
 
@@ -683,7 +569,6 @@ module CLA_carry_logic_6 (
     input logic ci0,
     output logic co
 );
-
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
 logic nand7_out, nand8_out;
@@ -774,7 +659,6 @@ module CLA_carry_logic_7 (
     input logic ci0,
     output logic co
 );
-
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
 logic nand7_out, nand8_out, nand9_out;
@@ -866,119 +750,13 @@ nand9_delay u10 (
 ); 
 endmodule
 
+
 //------------ 4. Design and connect the 8-bit CLA------------
-/*
 module cla_8bit (
     input logic [7:0] a,
     input logic [7:0] b,
     output logic [8:0] sum
 );
-
-logic [7:0] p, g; //propagate and generate
-logic [8:0] c;  //carry
-
-// Propagate Logic
-genvar i;
-generate
-    for (i = 0; i < 8; i++) 
-        begin : generate_PL
-            propagate_logic pl (
-                .a(a[i]),
-                .b(b[i]),
-                .p(p[i])
-            );
-        end
-endgenerate
- 
-// Generate Logic
-genvar j;
-generate
-    for (j = 0; j < 8; j++) 
-        begin : generate_GL 
-            generate_logic gl (
-                .a(a[j]), 
-                .b(b[j]), 
-                .g(g[j])
-            );
-        end
-endgenerate
-
-// Sum Logic
-genvar k;
-generate
-    for (k = 0; k < 8; k++) 
-        begin : generate_SL
-            sum_logic sl (
-                .a(a[k]),
-                .b(b[k]),
-                .cin(c[k]),
-                .s(sum[k]) 
-            );
-        end
-endgenerate
-
-// Slice 0 does not need carry computation – 
-// Cin is the carry coming from outside and is assumed to be 0
-
-assign c[0] = 1'b0; // Cin is 0
-assign sum[8] = c[8];
-
-//Slice 1
-CLA_carry_logic_0 cl0 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .ci0(1'b0), 
-    .co(c[1])
-);
-
-//Slice 2
-CLA_carry_logic_1 cl1 (
-    .p0(p[0]),
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .ci0(c[0]), 
-    .co(c[2])
-);
-
-
-// Slice 3
-CLA_carry_logic_2 cl2 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]),
-    .ci0(c[0]), 
-    .co(c[3])
-);
-
-// Slice 4 implements sign extension
-CLA_carry_logic_3 cl3 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]), 
-    .ci0(c[0]), 
-    .co(c[4])
-);
-
-endmodule
-
-
-*/
-
-module cla_8bit (
-    input logic [7:0] a,
-    input logic [7:0] b,
-    output logic [8:0] sum
-);
-
 logic [7:0] p, g; //propagate and generate
 logic [8:0] c;  //carry
 
@@ -1010,7 +788,6 @@ endgenerate
 
 // Sum Logic
 assign c[0] = 1'b0; // Cin is 0
-
 genvar k;
 generate
     for (k = 0; k < 8; k++) begin : SUM_BLOCK
@@ -1022,143 +799,101 @@ generate
         );
     end
 endgenerate
+assign sum[8] = c[8]; // The final MSB sum bit (sign extension)
 
-// The final MSB sum bit (sign extension)
-assign sum[8] = c[8];
-
-/*
-//Slice 0
+// Slice 0
 CLA_carry_logic_0 cl0 (
     .p0(p[0]), 
     .g0(g[0]), 
-    .ci0(1'b0), 
+    .ci0(1'b0),   // external carry-in is 0
     .co(c[1])
-);*/
-
-//Slice 1
+);
+// Slice 1
 CLA_carry_logic_1 cl1 (
-    .p0(p[0]),
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .ci0(c[1]),   // carry from cl0
     .co(c[2])
 );
 // Slice 2
 CLA_carry_logic_2 cl2 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]),
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]),
+    .ci0(c[2]),   // carry from cl1
     .co(c[3])
 );
-
 // Slice 3
 CLA_carry_logic_3 cl3 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]), 
+    .p3(p[3]), .g3(g[3]), 
+    .ci0(c[3]),   // carry from cl2
     .co(c[4])
 );
 // Slice 4
 CLA_carry_logic_4 cl4 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]),
-    .p4(p[4]), 
-    .g4(g[4]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]), 
+    .p3(p[3]), .g3(g[3]),
+    .p4(p[4]), .g4(g[4]), 
+    .ci0(c[4]),   // carry from cl3
     .co(c[5])
 );
 // Slice 5
 CLA_carry_logic_5 cl5 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]),
-    .p4(p[4]), 
-    .g4(g[4]),
-    .p5(p[5]), 
-    .g5(g[5]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]), 
+    .p3(p[3]), .g3(g[3]),
+    .p4(p[4]), .g4(g[4]),
+    .p5(p[5]), .g5(g[5]), 
+    .ci0(c[5]),   // carry from cl4
     .co(c[6])
 );
 // Slice 6
 CLA_carry_logic_6 cl6 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]),
-    .p4(p[4]), 
-    .g4(g[4]),
-    .p5(p[5]), 
-    .g5(g[5]),
-    .p6(p[6]), 
-    .g6(g[6]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]), 
+    .p3(p[3]), .g3(g[3]),
+    .p4(p[4]), .g4(g[4]),
+    .p5(p[5]), .g5(g[5]),
+    .p6(p[6]), .g6(g[6]), 
+    .ci0(c[6]),   // carry from cl5
     .co(c[7])
 );
 // Slice 7
 CLA_carry_logic_7 cl7 (
-    .p0(p[0]), 
-    .g0(g[0]), 
-    .p1(p[1]), 
-    .g1(g[1]), 
-    .p2(p[2]), 
-    .g2(g[2]), 
-    .p3(p[3]), 
-    .g3(g[3]),
-    .p4(p[4]), 
-    .g4(g[4]),
-    .p5(p[5]), 
-    .g5(g[5]),
-    .p6(p[6]), 
-    .g6(g[6]),
-    .p7(p[7]), 
-    .g7(g[7]), 
-    .ci0(1'b0), 
+    .p0(p[0]), .g0(g[0]), 
+    .p1(p[1]), .g1(g[1]), 
+    .p2(p[2]), .g2(g[2]), 
+    .p3(p[3]), .g3(g[3]),
+    .p4(p[4]), .g4(g[4]),
+    .p5(p[5]), .g5(g[5]),
+    .p6(p[6]), .g6(g[6]),
+    .p7(p[7]), .g7(g[7]), 
+    .ci0(c[7]),   // carry from cl6
     .co(c[8])
 );
+
 endmodule
 
 //------------ 5. Simulate and verify your 8-bit CLA-----------
-
-
 //(testbench)
 
 
 //------- 6. Modify 8-bit CLA to 8-bit CLA with OVF and UVF detection------
-
 module cla_8bit_ovf_uvf (
 input logic [7:0] a,
 input logic [7:0] b,
 output logic [7:0] sum,
 output logic ovf, uvf
 );
-
 logic [8:0] cla_sum; //from cla_8-bit tb
+
 cla_8bit dut (
     .a(a),
     .b(b),
@@ -1170,10 +905,7 @@ assign uvf = ( a[7] &  b[7] & ~cla_sum[7]); ///if both inputs are negative but r
 endmodule
 
 
-
-
 //------------ 7. Add saturation mechanism----------
-
 module cla_8bit_sat_out (
 input logic [7:0] a,
 input logic [7:0] b,
