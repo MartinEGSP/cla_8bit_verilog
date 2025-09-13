@@ -131,7 +131,7 @@ nand2_delay u3 (
     .a(nand1_out), 
     .b(nand2_out), 
     .y(co)
-); 
+);
 endmodule
 
 
@@ -264,7 +264,7 @@ module CLA_carry_logic_1 (  // c2 = g1 + p1g0 + p1p0c0
     input logic ci0,
     output logic co
 );
-logic nand1_out, nand2_out, nand3_out;
+logic nand1_out, nand2_out, nand3_out; 
 
 nand3_delay u1 (
     .a(p1), .b(p0), .c(ci0), 
@@ -277,7 +277,7 @@ nand2_delay u2 (
 nand2_delay u3 (
     .a(g1), .b(g1), 
     .y(nand3_out)
- );
+);
 nand3_delay u4 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .y(co)
@@ -327,7 +327,7 @@ module CLA_carry_logic_3 ( // c4 = g3 + p3g2 + p3p2g1 + p3p2p1g0 + p3p2p1p0c0
     output logic co
 );
 logic nand1_out, nand2_out, nand3_out;
-logic nand4_out, nand5_out;
+logic nand4_out, nand5_out, cout;
 
 nand5_delay u1 (
     .a(p3), .b(p2), .c(p1), 
@@ -354,8 +354,12 @@ nand2_delay u5 (
 nand5_delay u6 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .d(nand4_out), .e(nand5_out), 
-    .y(co)
-); 
+    .y(cout)
+);
+nand2_delay u7 (
+    .a(cout), .b(cout), 
+    .y(co) //co need to be inverted one more time thats way cout
+);
 endmodule
 
 module CLA_carry_logic_4 ( // c5 = g4 + p4·g3 + p4·p3·g2 + p4·p3·p2·g1 + p4·p3·p2·p1·g0 + p4·p3·p2·p1·p0·c0
@@ -368,7 +372,7 @@ module CLA_carry_logic_4 ( // c5 = g4 + p4·g3 + p4·p3·g2 + p4·p3·p2·g1 + p
     output logic co
 );
 logic nand1_out, nand2_out, nand3_out;
-logic nand4_out, nand5_out, nand6_out;
+logic nand4_out, nand5_out, nand6_out, cout;
 
 nand6_delay u1 (
     .a(p4), .b(p3), .c(p2), 
@@ -400,7 +404,11 @@ nand2_delay u6 (
 nand6_delay u7 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .d(nand4_out), .e(nand5_out), .f(nand6_out), 
-    .y(co)
+    .y(cout)
+);
+nand2_delay u8 (
+    .a(cout), .b(cout), 
+    .y(co) //co need to be inverted one more time thats way cout
 );
 endmodule
 
@@ -417,7 +425,7 @@ module CLA_carry_logic_5 ( // c6 = g5 + p5·g4 + p5·p4·g3 + p5·p4·p3·g2 + p
 
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
-logic nand7_out;
+logic nand7_out, cout;
 
 
 nand7_delay u1 (
@@ -457,7 +465,11 @@ nand7_delay u8 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .d(nand4_out), .e(nand5_out), .f(nand6_out), 
     .g(nand7_out), 
-    .y(co)
+    .y(cout)
+);
+nand2_delay u9 (
+    .a(cout), .b(cout), 
+    .y(co) //co need to be inverted one more time thats way cout
 );
 endmodule
 
@@ -475,7 +487,7 @@ module CLA_carry_logic_6 (
 );
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
-logic nand7_out, nand8_out;
+logic nand7_out, nand8_out, cout;
 
 nand8_delay u1 (
     .a(p6), .b(p5), .c(p4), 
@@ -520,7 +532,12 @@ nand8_delay u9 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .d(nand4_out), .e(nand5_out), .f(nand6_out), 
     .g(nand7_out), .h(nand8_out), 
-    .y(co));
+    .y(cout)
+);
+nand2_delay u10 (
+    .a(cout), .b(cout), 
+    .y(co) //co need to be inverted one more time thats way cout
+);
 endmodule
 
 module CLA_carry_logic_7 (
@@ -537,7 +554,7 @@ module CLA_carry_logic_7 (
 );
 logic nand1_out, nand2_out, nand3_out;
 logic nand4_out, nand5_out, nand6_out;
-logic nand7_out, nand8_out, nand9_out;
+logic nand7_out, nand8_out, nand9_out, cout;
 
 nand9_delay u1 (
     .a(p7), .b(p6), .c(p5), 
@@ -587,7 +604,11 @@ nand9_delay u10 (
     .a(nand1_out), .b(nand2_out), .c(nand3_out), 
     .d(nand4_out), .e(nand5_out), .f(nand6_out), 
     .g(nand7_out), .h(nand8_out), .i(nand9_out), 
-    .y(co)
+    .y(cout)
+);
+nand2_delay u11 (
+    .a(cout), .b(cout), 
+    .y(co) //co need to be inverted one more time thats way cout
 );
 endmodule
 
@@ -653,7 +674,7 @@ CLA_carry_logic_0 cl0 (
 CLA_carry_logic_1 cl1 (
     .p0(p[0]), .g0(g[0]), 
     .p1(p[1]), .g1(g[1]), 
-    .ci0(c[0]),   // carry from cl0
+    .ci0(c[1]),   // carry from cl0
     .co(c[2])
 );
 // Slice 2
@@ -661,7 +682,7 @@ CLA_carry_logic_2 cl2 (
     .p0(p[0]), .g0(g[0]), 
     .p1(p[1]), .g1(g[1]), 
     .p2(p[2]), .g2(g[2]),
-    .ci0(c[0]),   // carry from cl1
+    .ci0(c[2]),   // carry from cl1
     .co(c[3])
 );
 // Slice 3
@@ -670,7 +691,7 @@ CLA_carry_logic_3 cl3 (
     .p1(p[1]), .g1(g[1]), 
     .p2(p[2]), .g2(g[2]), 
     .p3(p[3]), .g3(g[3]), 
-    .ci0(c[0]),   // carry from cl2
+    .ci0(c[3]),   // carry from cl2
     .co(c[4])
 );
 // Slice 4
@@ -680,7 +701,7 @@ CLA_carry_logic_4 cl4 (
     .p2(p[2]), .g2(g[2]), 
     .p3(p[3]), .g3(g[3]),
     .p4(p[4]), .g4(g[4]), 
-    .ci0(c[0]),   // carry from cl3
+    .ci0(c[4]),   // carry from cl3
     .co(c[5])
 );
 // Slice 5
@@ -691,7 +712,7 @@ CLA_carry_logic_5 cl5 (
     .p3(p[3]), .g3(g[3]),
     .p4(p[4]), .g4(g[4]),
     .p5(p[5]), .g5(g[5]), 
-    .ci0(c[0]),   // carry from cl4
+    .ci0(c[5]),   // carry from cl4 
     .co(c[6])
 );
 // Slice 6
@@ -703,7 +724,7 @@ CLA_carry_logic_6 cl6 (
     .p4(p[4]), .g4(g[4]),
     .p5(p[5]), .g5(g[5]),
     .p6(p[6]), .g6(g[6]), 
-    .ci0(c[0]),   // carry from cl5
+    .ci0(c[6]),   // carry from cl5
     .co(c[7])
 );
 // Slice 7
@@ -716,7 +737,7 @@ CLA_carry_logic_7 cl7 (
     .p5(p[5]), .g5(g[5]),
     .p6(p[6]), .g6(g[6]),
     .p7(p[7]), .g7(g[7]), 
-    .ci0(c[0]),   // carry from cl6
+    .ci0(c[7]),   // carry from cl6
     .co(c[8])
 );
 
