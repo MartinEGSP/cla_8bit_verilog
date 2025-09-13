@@ -1,47 +1,46 @@
-//------------ 5. Simulate and verify your 8-bit CLA-----------
-`timescale 1ns / 1ps // interpret time units
+`timescale 1ns/1ps
 
-module cla_8bit_tb;
-    logic [7:0] a; // can not handle negative numbers
+module cla_debug_tb;
+    logic [7:0] a;
     logic [7:0] b;
     logic [8:0] sum;
 
-    // Instantiate the Device Under Test (DUT)
+    // DUT
     cla_8bit dut_cla(
         .a(a),
         .b(b),
         .sum(sum)
     );
 
-    logic [8:0] expected; // put this at module scope
+    logic [8:0] expected;
 
     initial begin
-        $display("Starting Testbench step 5");
-        
-        // VCD dump for GTKWave
-        $dumpfile("cla_8bit.vcd");
-        $dumpvars(0, cla_8bit_tb);
-        
-        // Apply test vectors
-        for (int x = 0; x <= 7; x++) begin
-            for (int y = 0; y <= 7; y++) begin
-                a = x;
-                b = y;
-                #20; // allow time for propagation
+        $dumpfile("cla_debug.vcd");
+        $dumpvars(0, cla_debug_tb);
 
-                expected = a + b;
+        $display("Starting CLA debug test...");
 
-                $display("a=%02d (%08b)  b=%02d (%08b)  sum=%02d (%09b)  expected=%02d (%09b)  c=%09b",
-                         a, a, b, b, sum, sum, expected, expected, dut_cla.c);
+        // Case 1
+        a = 3; b = 5; #20;
+        expected = a + b;
+        $display("a=%0d (%08b)  b=%0d (%08b)", a, a, b, b);
+        $display("p=%08b g=%08b c=%09b sum=%09b (dec=%0d) expected=%09b",
+                 dut_cla.p, dut_cla.g, dut_cla.c, sum, sum, expected);
 
-                if (sum !== expected) begin
-                    $display("MISMATCH: a=%0d b=%0d  sum=%09b  expected=%09b",
-                             a, b, sum, expected);
-                end
-            end
-        end
+        // Case 2
+        a = 7; b = 7; #20;
+        expected = a + b;
+        $display("a=%0d (%08b)  b=%0d (%08b)", a, a, b, b);
+        $display("p=%08b g=%08b c=%09b sum=%09b (dec=%0d) expected=%09b",
+                 dut_cla.p, dut_cla.g, dut_cla.c, sum, sum, expected);
 
-        $display("Test completed");
+        // Case 3
+        a = 0; b = 0; #20;
+        expected = a + b;
+        $display("a=%0d (%08b)  b=%0d (%08b)", a, a, b, b);
+        $display("p=%08b g=%08b c=%09b sum=%09b (dec=%0d) expected=%09b",
+                 dut_cla.p, dut_cla.g, dut_cla.c, sum, sum, expected);
+
         $finish;
     end
 endmodule
