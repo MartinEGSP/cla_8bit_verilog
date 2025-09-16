@@ -12,7 +12,6 @@ cla_8bit dut_cla(
     .b(b),
     .sum(sum)
 );
-
 initial begin
     $display("Starting Testbench step 5");
     
@@ -25,12 +24,10 @@ initial begin
     $display("---------------------------");
 
     // Apply test vectors
-    for (int x = 0; x <= 7; x++) begin
-        for (int y = 0; y <= 7; y++) begin
-            a = x;
-            b = y;
-            #20; // allow time for propagation
-            
+    for (int x = 0; x < 7; x += 1) begin
+        for (int y = 0; y < 7; y += 1) begin
+            a = x; 
+            b = y; #30
             $display("%2d  %2d  %3d   %09b", a, b, sum, sum);
         end
     end
